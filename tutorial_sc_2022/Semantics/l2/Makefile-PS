@@ -1,0 +1,55 @@
+# Unix Makefile for L2 implementation
+
+# Version with my pathnames, not those for the Intel Lab installation
+
+MOSMLHOME=${HOME}/mosml/bin
+#MOSMLTOOLS=camlrunm $(MOSMLHOME)/tools
+
+#MOSMLHOME=/usr/groups/theory/mosml2.0/bin
+MOSMLTOOLS=/home/pes20/mosml/bin/camlrunm $(MOSMLHOME)/tools
+
+MOSMLC=$(MOSMLHOME)/mosmlc -c
+MOSMLL=$(MOSMLHOME)/mosmlc
+MOSMLLEX=$(MOSMLHOME)/mosmllex
+MOSMLYACC=$(MOSMLHOME)/mosmlyac
+
+all: Syntax.uo Lexer.uo Main.uo Parser.uo Semantics.uo PrettyPrint.uo
+	$(MOSMLC) -o Main Syntax.uo Parser.uo Lexer.uo Semantics.uo PrettyPrint.uo Main.uo 
+
+Parser.sml Parser.sig: Parser.grm
+	$(MOSMLYACC) Parser.grm
+
+.SUFFIXES :
+.SUFFIXES : .sml .sig .ui .uo .mlp .lex .c .o
+
+.sig.ui:
+	$(MOSMLC) $<
+
+.sml.uo:
+	$(MOSMLC) $<
+
+.lex.sml:
+	$(MOSMLLEX) $<
+
+depend: Lexer.sml Parser.sml 
+	rm -f Makefile.bak
+	mv Makefile Makefile.bak
+	$(MOSMLTOOLS)/cutdeps < Makefile.bak > Makefile
+	$(MOSMLTOOLS)/mosmldep >> Makefile
+
+clean:
+	rm -f Parser.sig Parser.sml Parser.output Lexer.sml
+	rm -f *.ui *.uo
+	rm -f Makefile.bak
+	rm -f *~
+	rm -f l2-all.tar
+
+### DO NOT DELETE THIS LINE
+Parser.ui: Syntax.uo 
+Parser.uo: Parser.ui Syntax.uo 
+Lexer.uo: Parser.ui 
+Semantics.ui : Syntax.uo
+Semantics.uo: Syntax.uo
+PrettyPrint.uo: Semantics.uo Syntax.uo
+Main.uo: PrettyPrint.uo Semantics.uo Parser.ui Lexer.uo Syntax.uo
+

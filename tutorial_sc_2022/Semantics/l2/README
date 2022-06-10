@@ -1,0 +1,35 @@
+(* 2002-11-08 -- Time-stamp: <2003-04-25 17:28:25 pes20>    *)
+(* Peter Sewell                                             *)
+
+This directory contains an interpreter, pretty-printer and
+type-checker for the language L2.
+
+To make it go, copy it into a working directory, ensure Moscow ML
+is available (including mosmllex and mosmlyac), and type
+
+  make
+  mosml
+  load "Main";
+
+It prompts you for an L2 expression (terminated by RETURN, no terminating
+semicolons) and then for an initial store.  For the latter, if you
+just press RETURN you get a default store in which all the locations
+mentioned in your expression are mapped to 0.
+
+Watch out for the parsing - it is not quite the same as (eg) mosml, so
+you need to parenthesise more.
+
+The source files are:
+
+  Main.sml         the top-level loop
+  Syntax.sml       datatypes for raw and de-bruijn expressions
+  Lexer.lex        the lexer (input to mosmllex)
+  Parser.grm       the grammar (input to mosmlyac)
+  Semantics.sml    scope resolution, the interpreter, and the typechecker
+  PrettyPrint.sml  pretty-printing code
+
+  Examples.l2      some handy examples for cut-and-pasting into the 
+                     top-level loop
+
+of these, you're most likely to want to look at, and change, Semantics.sml.
+You should first also look at Syntax.sml.

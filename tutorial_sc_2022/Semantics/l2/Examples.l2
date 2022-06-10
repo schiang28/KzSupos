@@ -1,0 +1,43 @@
+1+2
+1+2+3
+(fn x:int => x+1) 2
+(fn x:int => fn y:int => x+y+1) 2 3
+l := 3
+!l
+(l2:=0; while !l1>=1 do (l2:=!l2+!l1; l1:=!l1 + -1))       l1=3, l2=0
+
+
+let val x:int = 3 in x end
+
+let val rec x:int->int = fn y:int => if true then y else x y in x 3 end
+
+let val rec x:int->int = (fn y:int => if true then y else x y) in x 3 end
+
+let val rec x:int->int = (fn y:int => if y >=1 then y + (x (y+ -1)) else 0) in x 3 end
+
+let val rec x:int->int->int = (fn y:int => fn z:int => if y >=1 then y + (x (y+ -1) 44) else y) in x 3 55 end
+
+(* Below, in the context of the let val rec, x f n finds the smallest
+n' >= n for which f(n') = 0.  We apply it to the function (fn z:int=>
+if z>=3 then (if 3>=z then 0 else 1) else 1), which is 0 for argument 3
+and 1 elsewhere *)
+
+
+
+let val rec x:(int->int)->int->int 
+  = fn f:int->int => fn n:int => if (f n) >=1 then x f (n+1) else n 
+in 
+  let val f:int->int 
+    = (fn z:int=> if z>=3 then (if 3>=z then 0 else 1) else 1)
+  in 
+    x f 0
+  end
+end
+
+
+let val rec x:(int->int)->int->int  = fn f:int->int => fn n:int => if (f n) >=1 then x f (n+1) else n in  let val f:int->int = (fn z:int=> if z>=3 then (if 3>=z then 0 else 1) else 1) in x f 0 end end
+
+
+
+
+
